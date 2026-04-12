@@ -1,0 +1,39 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.90\textwidth,
+    height=0.55\textwidth,
+    xlabel={Query \#},
+    ylabel={Latency (ms)},
+    title={Single-Query Inference Latency (CPU)},
+    ymin=0, ymax=63,
+    xmin=0.5, xmax=20.5,
+    xtick={1,...,20},
+    mark=*, mark size=3pt,
+    legend pos=north east,
+    legend style={font=\small},
+    grid=major,
+    grid style={gray!20},
+]
+    \addplot[
+        blue!70,
+        thick,
+        mark=*,
+        mark options={fill=blue!50}
+    ] table[
+        col sep=comma,
+        x=query,
+        y=latency
+    ] {csvtables/latencies.csv};
+
+    \addplot[red!60!black,     thick, dashed,     no marks, domain=0.5:20.5] {19.5};
+    \addplot[orange!70!black,  thick, dotted,     no marks, domain=0.5:20.5] {34.8};
+    \addplot[purple!60!black,  thick, dashdotted, no marks, domain=0.5:20.5] {49.7};
+
+    \legend{Latency, Min (19.5\,ms), Median (34.8\,ms), Max (49.7\,ms)}
+\end{axis}
+\end{tikzpicture}
+\end{document}

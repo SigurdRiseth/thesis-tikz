@@ -1,0 +1,75 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+{\scriptsize
+\begin{sequencediagram}
+
+% Participants
+\newthread{farmer}{: Farmer}
+\newinst{client}{: Voice Client}
+\newinst{stt}{: STT Service}
+\newinst{nlu}{: NLU Module}
+\newinst{backend}{: Backend APIs}
+
+% ------------------------------------------------
+% PTT interaction
+% ------------------------------------------------
+
+\begin{call}{farmer}{Press PTT}{client}{Release PTT}
+
+% ------------------------------------------------
+% Live streaming + transcription
+% ------------------------------------------------
+
+\begin{sdblock}{Live voice capture and transcription}{While speaking}
+
+\mess{client}{Open streaming session via WebSocket}{stt}
+
+\begin{sdblock}{Streaming loop}{Audio + partial transcripts}
+
+\mess{client}{Audio chunk}{stt}
+\mess{stt}{Partial transcript}{client}
+\mess{client}{Update live caption}{farmer}
+
+\end{sdblock}
+
+\mess{stt}{Final transcript}{client}
+
+\end{sdblock}
+
+\end{call}
+
+% ------------------------------------------------
+% Intent parsing
+% ------------------------------------------------
+
+\begin{sdblock}{Intent recognition}{Convert transcript to structured command}
+
+\begin{call}{client}{Parse transcript}{nlu}{Intent + entities}
+\end{call}
+
+\end{sdblock}
+
+% ------------------------------------------------
+% Ordering workflow
+% ------------------------------------------------
+
+\begin{sdblock}{Ordering workflow}{Product lookup and confirmation}
+
+\begin{call}{client}{\texttt{GET /catalog/search}}{backend}{Product candidates}
+\end{call}
+
+\begin{call}{client}{Confirm order}{farmer}{Confirmed}
+\end{call}
+
+\begin{call}{client}{\texttt{POST /orders}}{backend}{Order created}
+\end{call}
+
+\mess{client}{Display order confirmation}{farmer}
+
+\end{sdblock}
+
+\end{sequencediagram}
+}
+\end{document}

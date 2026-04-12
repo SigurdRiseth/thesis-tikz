@@ -1,0 +1,36 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=0.6cm,
+    every node/.style={font=\small},
+    phase/.style={rectangle, rounded corners=4pt, draw, thick,
+                  fill=blue!8, minimum width=4.5cm, minimum height=0.75cm,
+                  align=center},
+    term/.style={rectangle, rounded corners=4pt, draw, thick,
+                 fill=gray!15, minimum width=4.5cm, minimum height=0.75cm,
+                 align=center},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
+    loop/.style={-{Stealth[length=2mm]}, thick, dashed},
+    lbl/.style={font=\footnotesize\itshape, text=gray},
+]
+    \node[term]  (init)     {Accept connection \& send config};
+    \node[phase, below=of init]     (wait)     {Await message or timeout};
+    \node[phase, below=of wait]     (dispatch) {Dispatch by type};
+    \node[phase, below=of dispatch] (handle)   {Handle: audio / end turn / timeout};
+    \node[term,  below=of handle]   (cleanup)  {Cleanup \& close session};
+
+    \draw[arrow] (init)     -- (wait);
+    \draw[arrow] (wait)     -- (dispatch);
+    \draw[arrow] (dispatch) -- (handle);
+
+    % loop back
+    \draw[loop] (handle.east) -- ++(1.2,0)
+                node[lbl, right]{continue}
+                |- (wait.east);
+
+    % exit
+    \draw[arrow] (handle.south) -- node[lbl, right]{disconnect / exception} (cleanup);
+\end{tikzpicture}
+\end{document}

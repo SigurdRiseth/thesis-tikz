@@ -1,0 +1,74 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    task/.style={
+        rectangle, rounded corners=5pt,
+        draw=blue!50!black, thick, fill=blue!7,
+        minimum width=4.2cm, minimum height=0.82cm, align=center
+    },
+    watch/.style={
+        rectangle, rounded corners=5pt,
+        draw=gray!60, thick, fill=gray!8,
+        minimum width=4.2cm, minimum height=0.82cm, align=center
+    },
+    queue/.style={
+        rectangle, rounded corners=3pt,
+        draw=orange!65!black, dashed, thick, fill=orange!8,
+        minimum width=2.8cm, minimum height=0.68cm,
+        align=center, font=\small\itshape
+    },
+    store/.style={
+        rectangle, rounded corners=3pt,
+        draw=teal!55!black, dashed, thick, fill=teal!7,
+        minimum width=2.8cm, minimum height=0.68cm,
+        align=center, font=\small\itshape
+    },
+    term/.style={
+        rectangle, rounded corners=5pt,
+        draw=gray!60, thick, fill=gray!12,
+        minimum width=2.8cm, minimum height=0.82cm, align=center
+    },
+    arrow/.style={-{Stealth[length=2.5mm]}, thick},
+    darrow/.style={-{Stealth[length=2mm]}, thick, dashed, gray!55},
+    lbl/.style={
+        font=\footnotesize\itshape, text=gray!80!black,
+        fill=white, fill opacity=0.9, inner sep=1.5pt
+    },
+]
+    % ── Main task nodes ──────────────────────────────────────────────
+    \node[task]  (reader) at (0,    0)    {\texttt{ffmpeg\_stdout\_reader}};
+    \node[task]  (proc)   at (8.5,  0)    {\texttt{transcription\_processor}};
+    \node[watch] (wd)     at (0,   -3.5)  {\texttt{watchdog}};
+    \node[task]  (fmt)    at (8.5, -3.5)  {\texttt{results\_formatter}};
+    \node[term]  (ws)     at (13.2,-3.5)  {WebSocket\\(\texttt{FrontData})};
+
+    % ── Intermediate data nodes ───────────────────────────────────────
+    \node[queue] (q)  at (4.25, 0)     {\textit{transcription\_queue}};
+    \node[store] (st) at (8.5, -1.75)  {\textit{shared State}\\(\texttt{asyncio.Lock})};
+
+    % ── Data flow arrows ──────────────────────────────────────────────
+    \draw[arrow] (reader.east) -- (q.west);
+    \draw[arrow] (q.east)      -- (proc.west);
+    \node[lbl, above=6pt] at (q.north)
+        {PCM chunks\,/\,\texttt{Silence} events};
+
+    \draw[arrow] (proc.south) -- (st.north)
+        node[midway, right=4pt, lbl] {write: tokens, buffer};
+
+    \draw[arrow] (st.south) -- (fmt.north)
+        node[midway, right=4pt, lbl] {read: poll 50\,ms};
+
+    \draw[arrow] (fmt.east) -- (ws.west)
+        node[midway, above, lbl] {\texttt{FrontData}};
+
+    % ── Watchdog monitoring arrows (dashed) ───────────────────────────
+    \draw[darrow] (wd.north) -- node[lbl, left]{monitors} (reader.south);
+    \draw[darrow] (wd.east) to[bend left=15]
+        node[lbl, below, pos=0.5]{monitors} (fmt.west);
+    \draw[darrow] (wd.north east) to[out=60, in=240]
+        node[lbl, below, pos=0.5]{monitors} (proc.south west);
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,79 @@
+% Shared preamble — \input{preamble} in each figure file.
+% Compiled via Makefile which sets TEXINPUTS so this file is always found.
+
+% -----------------------------------------------------------------------
+% Fonts — matches ntnuthesis.cls
+% -----------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[charter, cal=cmcal]{mathdesign} % Charter body + math font
+\usepackage[scaled=.88]{berasans}           % Bera sans-serif
+\usepackage[scaled=.82]{DejaVuSansMono}     % DejaVu monospace (for \texttt)
+
+% -----------------------------------------------------------------------
+% TikZ & PGF
+% -----------------------------------------------------------------------
+\usepackage{tikz}
+\usetikzlibrary{
+  positioning,
+  arrows.meta,
+  fit,
+  calc,
+  backgrounds,
+  shapes.geometric,
+  decorations.pathreplacing,
+  decorations.markings,
+  matrix,
+}
+\usepackage{pgf-umlsd}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+
+% -----------------------------------------------------------------------
+% Math
+% -----------------------------------------------------------------------
+\usepackage{amsmath}
+
+% -----------------------------------------------------------------------
+% Color palette
+% -----------------------------------------------------------------------
+% Semantic NLP / model-diagram colors
+\colorlet{tok}{green!35!black}
+\colorlet{emb}{yellow!70!orange}
+\colorlet{trm}{blue!55!black}
+\colorlet{out}{red!70!black}
+% General purpose
+\colorlet{clrA}{blue!60!black}
+\colorlet{clrB}{orange!80!black}
+\colorlet{clrC}{green!50!black}
+\colorlet{clrD}{red!65!black}
+\colorlet{clrE}{violet!70!black}
+% Neutral fills
+\colorlet{fillLight}{gray!12}
+\colorlet{fillMed}{gray!25}
+
+% -----------------------------------------------------------------------
+% Global TikZ styles
+% NOTE: no blank lines inside \tikzset{} — blank lines produce \par and
+%       break pgfkeys parsing.
+% -----------------------------------------------------------------------
+\tikzset{
+  >=Latex,
+  % --- generic boxes ---
+  box/.style={rectangle, draw, thick, align=center, inner sep=4pt, minimum height=8mm},
+  rbox/.style={box, rounded corners=6pt},
+  dbox/.style={box, dashed},
+  % --- NLP diagram node types ---
+  token/.style={rbox, draw=tok!80, fill=tok!20, minimum width=1.8cm, font=\small},
+  embed/.style={box, draw=emb!90, fill=emb!30, minimum width=1.4cm},
+  trm/.style={ellipse, draw=trm!90, fill=trm!20, minimum width=1.6cm, minimum height=8mm},
+  output/.style={rbox, draw=out!90, fill=out!20, minimum width=1.7cm, font=\small},
+  % --- arrows ---
+  arrow/.style={-{Stealth[length=2mm]}, thick},
+  connect/.style={->, thick, gray!65},
+  darrow/.style={<->, thick},
+  % --- annotation ---
+  labelbox/.style={draw, thick, inner sep=4pt, rounded corners=3pt, font=\scriptsize\bfseries},
+}

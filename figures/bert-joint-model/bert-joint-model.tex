@@ -1,0 +1,76 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[x=1cm,y=1.15cm]
+
+    % ---------- x positions ----------
+    \def\xA{0}
+    \def\xB{2}
+    \def\xC{4}
+    \def\xD{6}
+    \def\xE{8}
+    \def\xF{10}
+
+    % ---------- tokens ----------
+    \node[token] (t0) at (\xA,0) {[CLS]};
+    \node[token] (t1) at (\xB,0) {bestill};
+    \node at (\xC,0) {$\cdots$};
+    \node[token] (t2) at (\xD,0) {silo};
+    \node[token] (t3) at (\xE,0) {3};
+    \node[token] (t4) at (\xF,0) {[SEP]};
+
+    % ---------- embeddings ----------
+    \node[embed] (e1) at (\xA,1.2) {$E_1$};
+    \node[embed] (e2) at (\xB,1.2) {$E_2$};
+    \node at (\xC,1.2) {$\cdots$};
+    \node[embed] (eT2) at (\xD,1.2) {$E_{T-2}$};
+    \node[embed] (eT1) at (\xE,1.2) {$E_{T-1}$};
+    \node[embed] (eT)  at (\xF,1.2) {$E_T$};
+
+    \foreach \a/\b in {t0/e1,t1/e2,t2/eT2,t3/eT1,t4/eT}
+        \draw[connect] (\a) -- (\b);
+
+    % ---------- encoder layer 1 ----------
+    \node[trm] (h1a) at (\xA,2.4) {Trm};
+    \node[trm] (h2a) at (\xB,2.4) {Trm};
+    \node at (\xC,2.4) {$\cdots$};
+    \node[trm] (hTa) at (\xD,2.4) {Trm};
+    \node[trm] (hT1a) at (\xE,2.4) {Trm};
+    \node[trm] (hT2a) at (\xF,2.4) {Trm};
+
+    % ---------- encoder layer 2 ----------
+    \node[trm] (h1b) at (\xA,3.6) {Trm};
+    \node[trm] (h2b) at (\xB,3.6) {Trm};
+    \node at (\xC,3.6) {$\cdots$};
+    \node[trm] (hTb) at (\xD,3.6) {Trm};
+    \node[trm] (hT1b) at (\xE,3.6) {Trm};
+    \node[trm] (hT2b) at (\xF,3.6) {Trm};
+
+    % ---------- attention mesh layer 1 ----------
+    \foreach \a in {e1,e2,eT2,eT1,eT}{
+      \foreach \b in {h1a,h2a,hTa,hT1a,hT2a}{
+        \draw[connect] (\a) -- (\b);
+      }
+    }
+
+    % ---------- attention mesh layer 2 ----------
+    \foreach \a in {h1a,h2a,hTa,hT1a,hT2a}{
+      \foreach \b in {h1b,h2b,hTb,hT1b,hT2b}{
+        \draw[connect] (\a) -- (\b);
+      }
+    }
+
+    % ---------- outputs ----------
+    \node[output] (intent) at (\xA,4.8) {create\_order};
+    \node[output] (o1) at (\xB,4.8) {O};
+    \node at (\xC,4.8) {$\cdots$};
+    \node[output] (oT2) at (\xD,4.8) {B-TSL};
+    \node[output] (oT1) at (\xE,4.8) {I-TSL};
+    \node[output] (oT)  at (\xF,4.8) {O};
+
+    \foreach \a/\b in {h1b/intent,h2b/o1,hTb/oT2,hT1b/oT1,hT2b/oT}
+        \draw[connect] (\a) -- (\b);
+
+\end{tikzpicture}
+\end{document}

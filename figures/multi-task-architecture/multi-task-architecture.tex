@@ -1,0 +1,36 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=0.9cm and 0.6cm,
+    every node/.style={font=\small, inner sep=2pt, align=center},
+    input/.style      = {rectangle, rounded corners=3pt,
+                         draw, thick, fill=gray!15,
+                         minimum width=2.5cm, minimum height=0.8cm},
+    encoder/.style    = {rectangle, rounded corners=3pt,
+                         draw, thick, fill=blue!10,
+                         minimum width=3.2cm, minimum height=0.9cm},
+    repr/.style       = {rectangle, rounded corners=3pt,
+                         draw, thick, fill=orange!10,
+                         minimum height=0.8cm},
+    classifier/.style = {rectangle, rounded corners=3pt,
+                         draw, thick, fill=green!10,
+                         minimum height=0.8cm},
+    bracket/.style    = {draw, thick, inner sep=4pt,
+                         rounded corners=2pt, font=\scriptsize\bfseries}
+]
+    \node[input]    (input)   {Input tokens\\$x_{1},\dots,x_{T}$};
+    \node[encoder, below=of input] (bert) {NB-BERT Encoder};
+    \node[repr, below left=0.6cm and 0.3cm of bert] (cls)   {$\mathbf{h}_{\text{[CLS]}}$};
+    \node[repr, below right=0.6cm and 0.3cm of bert] (tokens){$\mathbf{h}_{1},\dots,\mathbf{h}_{T}$};
+    \node[classifier, below=of cls]    (intent) {Intent Classifier\\5 classes};
+    \node[classifier, below=of tokens] (ner)    {NER Classifier\\15 BIO labels};
+    \draw[arrow] (input) -- (bert);
+    \draw[arrow] (bert) to[out=210,in=90] (cls);
+    \draw[arrow] (bert) to[out=330,in=90] (tokens);
+    \draw[arrow] (cls)   -- (intent);
+    \draw[arrow] (tokens)-- (ner);
+    \node[bracket, fit=(intent)(ner), label=below:{Task-specific heads}] {};
+\end{tikzpicture}
+\end{document}

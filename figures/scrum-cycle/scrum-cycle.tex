@@ -1,0 +1,44 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+    event/.style={
+        rectangle, rounded corners=4pt,
+        draw=black!50, fill=gray!10,
+        text width=2.0cm, align=center,
+        font=\small, inner sep=6pt,
+        minimum height=1.0cm
+    },
+    artifact/.style={font=\footnotesize\itshape, text=black!50, align=center},
+    arr/.style={->, >=Stealth, semithick, black!60, shorten >=3pt, shorten <=3pt},
+    darr/.style={->, >=Stealth, thin, dashed, black!40, shorten >=3pt},
+]
+    % Four ceremonies at cardinal positions
+    \node[event] (plan)  at ( 0,   2.5) {Sprint\\Planning};
+    \node[event] (daily) at ( 3.1,  0 ) {Daily\\Stand-up};
+    \node[event] (rev)   at ( 0,  -2.5) {Sprint\\Review};
+    \node[event] (retro) at (-3.1,  0 ) {Sprint\\Retrospective};
+
+    % Clockwise arrows, curving outward
+    \draw[arr] (plan.east)   to[bend left=18] (daily.north);
+    \draw[arr] (daily.south) to[bend left=18] (rev.east);
+    \draw[arr] (rev.west)    to[bend left=18] (retro.south);
+    \draw[arr] (retro.north) to[bend left=18] (plan.west);
+
+    % Daily stand-up repeats (self-loop)
+    \draw[arr] (daily.north east)
+        to[out=45, in=-45, looseness=5]
+        node[right, font=\scriptsize, text=black!45] {daily}
+        (daily.south east);
+
+    % Sprint duration label at centre
+    \node[font=\footnotesize, text=black!40, align=center] at (0,0) {2~weeks};
+
+    % Product Backlog input (top) and Increment output (bottom)
+    \node[artifact] (bl)  at (0,  3.95) {Product Backlog};
+    \node[artifact] (inc) at (0, -3.95) {Product Increment};
+    \draw[darr] (bl.south)  -- (plan.north);
+    \draw[darr] (rev.south) -- (inc.north);
+\end{tikzpicture}
+\end{document}

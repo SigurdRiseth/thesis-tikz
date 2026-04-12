@@ -1,0 +1,30 @@
+\documentclass[tikz, border=5pt]{standalone}
+\input{preamble}
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=0.55cm,
+    every node/.style={font=\small},
+    stage/.style={rectangle, rounded corners=4pt, draw, thick,
+                  fill=blue!8, minimum width=4.4cm, minimum height=0.75cm,
+                  align=center},
+    term/.style={rectangle, rounded corners=4pt, draw, thick,
+                 fill=gray!15, minimum width=4.4cm, minimum height=0.75cm,
+                 align=center},
+    arrow/.style={-{Stealth[length=2mm]}, thick},
+    lbl/.style={font=\footnotesize\itshape, text=gray},
+]
+    \node[term]  (browser) {Browser (MediaRecorder)};
+    \node[stage, below=of browser] (ffmpeg)  {FFmpeg Decoder};
+    \node[stage, below=of ffmpeg]  (vad)     {Silero VAD};
+    \node[stage, below=of vad]     (whisper) {WhisperLiveKit Streaming ASR};
+    \node[stage, below=of whisper] (align)   {Token Alignment};
+    \node[term,  below=of align]   (client)  {WebSocket Response (\texttt{FrontData})};
+
+    \draw[arrow] (browser) -- node[lbl, right]{WebM/Opus frames} (ffmpeg);
+    \draw[arrow] (ffmpeg)  -- node[lbl, right]{PCM, 16\,kHz, mono (\texttt{s16le})} (vad);
+    \draw[arrow] (vad)     -- node[lbl, right]{speech chunks (\texttt{float32})} (whisper);
+    \draw[arrow] (whisper) -- node[lbl, right]{confirmed ASR tokens} (align);
+    \draw[arrow] (align)   -- node[lbl, right]{\texttt{FrontData} (lines + buffer)} (client);
+\end{tikzpicture}
+\end{document}
