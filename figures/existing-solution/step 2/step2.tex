@@ -1,0 +1,54 @@
+% ============================================================
+%  step2.tex  –  kraftfor
+%  Click count continues from step 1 (ended at 8).
+%  Compile with: pdflatex step2.tex
+% ============================================================
+
+\documentclass[tikz, border=5pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, backgrounds, shadows}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\definecolor{strandOrange}{HTML}{E87722}
+\definecolor{uiBorder}{HTML}{D1D5DB}
+
+\begin{document}
+
+\begin{tikzpicture}
+
+  % --- Base screenshot -------------------------------------
+  \node[anchor=south west, inner sep=0] (img) at (0,0)
+      {\includegraphics[width=\textwidth]{kraftfor.pdf}};
+
+  \coordinate (SW) at (img.south west);
+  \coordinate (SE) at (img.south east);
+  \coordinate (NW) at (img.north west);
+
+  % \ip{x}{y}: (0,0)=bottom-left, (1,1)=top-right
+  \newcommand{\ip}[2]{($(SW) + {#1}*($(SE)-(SW)$) + {#2}*($(NW)-(SW)$)$)}
+
+  \tikzset{
+    badge/.style={
+      circle,
+      draw=strandOrange, fill=strandOrange,
+      font=\bfseries\footnotesize\sffamily, text=white,
+      inner sep=1.5pt, minimum size=14pt,
+      drop shadow={shadow xshift=0.5pt, shadow yshift=-0.5pt}
+    },
+    arrow/.style={
+      -{Stealth[length=5pt]},
+      color=strandOrange,
+      line width=0.9pt
+    }
+  }
+
+  % ---- Badges (adjust coordinates after compiling) --------
+  % Badge 9: TODO – point to the relevant click target
+  \node[badge] (b9) at \ip{0.50}{0.50} {9};
+  \draw[arrow] (b9) -- \ip{0.45}{0.50};
+
+\end{tikzpicture}
+
+\end{document}

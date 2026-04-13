@@ -1,0 +1,52 @@
+% ============================================================
+%  step5.tex  –  handleliste
+%  Compile with: pdflatex step5.tex
+% ============================================================
+
+\documentclass[tikz, border=5pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, backgrounds, shadows}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\definecolor{strandOrange}{HTML}{E87722}
+\definecolor{uiBorder}{HTML}{D1D5DB}
+
+\begin{document}
+
+\begin{tikzpicture}
+
+  % --- Base screenshot -------------------------------------
+  \node[anchor=south west, inner sep=0] (img) at (0,0)
+      {\includegraphics[width=\textwidth]{handleliste.pdf}};
+
+  \coordinate (SW) at (img.south west);
+  \coordinate (SE) at (img.south east);
+  \coordinate (NW) at (img.north west);
+
+  \newcommand{\ip}[2]{($(SW) + {#1}*($(SE)-(SW)$) + {#2}*($(NW)-(SW)$)$)}
+
+  \tikzset{
+    badge/.style={
+      circle,
+      draw=strandOrange, fill=strandOrange,
+      font=\bfseries\footnotesize\sffamily, text=white,
+      inner sep=1.5pt, minimum size=14pt,
+      drop shadow={shadow xshift=0.5pt, shadow yshift=-0.5pt}
+    },
+    arrow/.style={
+      -{Stealth[length=5pt]},
+      color=strandOrange,
+      line width=0.9pt
+    }
+  }
+
+  % ---- Badges (adjust coordinates after compiling) --------
+  % Badge 12: TODO – point to the relevant click target
+  \node[badge] (b12) at \ip{0.50}{0.50} {12};
+  \draw[arrow] (b12) -- \ip{0.45}{0.50};
+
+\end{tikzpicture}
+
+\end{document}
